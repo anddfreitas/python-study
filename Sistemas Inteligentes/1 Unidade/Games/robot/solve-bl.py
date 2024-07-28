@@ -1,18 +1,16 @@
 '''
-No jogo há 2 salas, o robô só pode se mover para uma delas por vez, e pode ou não limpar elas.
+000 - Representação
 
-No jogo há três bits 000 
-
-O primeiro é a posição do robô:
+Primeiro bit: 
 0 - Esquerda
 1 - Direita
 
-O segundo e terceiro indicam respectivamente a sala e seu estado:
-0 - Limpa
-1 - Suja
+Segundo e terceiro bit
+0 - Limpo
+1 - Sujo
 
-Estado inicial: 011
-Estado final:   x00
+011 - Estado inicial
+x00 - Estado final
 '''
 
 class Estado():
@@ -21,21 +19,23 @@ class Estado():
         self.vetor = vetor
 
 def estado_inicial():
-    return Estado(None, [0, 1, 1])
+    return Estado(None, [0,1,1])
 
 def objetivo(estado):
-    return estado.vetor[1] == 0 and estado.vetor[2] == 0
+    if estado.vetor[1] == 0 and estado.vetor[2] == 0:
+        return True
+    return False
 
 def mostrar(estado):
-    if (estado.pai == None):
+    if estado.pai == None:
         return
-    mostrar(estado.pai)
+    mostrar(estado.pai) # Garante que todos os pais sejam mostrados
     print(estado.vetor)
 
 def move_direita(estado):
     ref = Estado(estado, estado.vetor.copy())
     ref.vetor[0] = 1
-    return ref
+    return ref 
 
 def move_esquerda(estado):
     ref = Estado(estado, estado.vetor.copy())
@@ -44,29 +44,29 @@ def move_esquerda(estado):
 
 def limpar(estado):
     ref = Estado(estado, estado.vetor.copy())
-    if ref.vetor[0] == 0:
+    if estado.vetor[0] == 0:
         ref.vetor[1] = 0
-    elif ref.vetor[0] == 1:
+    elif estado.vetor[0] == 1:
         ref.vetor[2] = 0
     return ref
 
-def expandir(estado):
+def expande(estado):
     return [move_direita(estado), move_esquerda(estado), limpar(estado)]
 
 atual = estado_inicial()
 ref = []
 
-while not objetivo(atual):
-    filhos = expandir(atual)
-    ref = ref + filhos
-
-    for i in range(len(ref)):
-        print(ref[i].vetor)
-
-    print()
-
+print("Expandidos: ")
+while(not objetivo(atual)):
+    filhos = expande(atual)
+    ref = ref + filhos  # Fila, o primeiro que entra é o primeiro que sai
     atual = ref.pop(0)
 
+    for i in range(len(ref)): # Mostra todos os estados expandidos
+        print(ref[i].vetor)
+    print()
+
+print("Solução: ")
 mostrar(atual)
 
-    
+
