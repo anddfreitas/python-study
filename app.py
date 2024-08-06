@@ -1,2 +1,2 @@
-print ("hello world")
-print ("say halo")
+for i in range (3):
+    print(i)
