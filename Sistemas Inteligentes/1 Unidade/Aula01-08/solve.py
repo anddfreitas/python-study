@@ -113,13 +113,3 @@ while(not vazio(lista)):
 	lista = adiciona(filtrados, lista)
 
 
-
-
-
-
-
-
-
-
-
-
