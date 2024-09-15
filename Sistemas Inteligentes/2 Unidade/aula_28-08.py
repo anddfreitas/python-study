@@ -48,6 +48,3 @@ while True:
     melhor_estado = melhor(estados)
     mostra_estado(melhor_estado)
     estados = atualiza_estados(estados, melhor_estado)
-
-mostra_estado(atual)
-
