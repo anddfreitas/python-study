@@ -25,36 +25,29 @@ def escolhe(populacao):
     return x if x.f > y.f else y
 
 def cruzamento(pai1, pai2):
-    ret = []
-
+    antenas = []
     for i in range(len(pai1.antenas)):
-        dominanciaX = random.randint(0, 1)
-        dominanciaY = random.randint(0, 1)
-        if dominanciaX == 0:
-            X = pai1.antenas[i][0]
-        elif dominanciaX == 1:
-            X = pai2.antenas[i][0]
-        if dominanciaY == 0:
-            Y = pai1.antenas[i][1]
-        elif dominanciaY == 1:
-            Y = pai2.antenas[i][1]
-        filho = (X, Y)
-        ret.append(filho)
-
-    return Estado(ret)
+        antena = pai1.antenas[i]
+        if(random.uniform(0, 1) < 0.5):
+            antena = pai2.antenas[i]
+        antenas.append(antena)
+    return Estado(antenas)
 
 def mutacao(estado):
-    ret = []
+    deltaX = random.uniform(-0.1, 0.1)
+    deltaY = random.uniform(-0.1, 0.1)
 
-    for i in range(len(estado.antenas)):
-        novoY, novoX = estado.antenas[i][0], estado.antenas[i][1]
-        ret.append((novoX, novoY))
+    i = random.randint(0, len(estado.antenas) - 1)
+    antenas = estado.antenas.copy()
+    antenas[i] = (estado.antenas[i][0] + deltaX, estado.antenas[i][1] + deltaY)
 
-    return Estado(ret)
+
+    return Estado(antenas)
 
 N = 50
 n_geracoes = 100
 taxa_mutacao = 0.1
+n_elite = 5
 
 populacao = [Estado([(random.uniform(0,1), random.uniform(0,1)) for _ in range(10)]) for _ in range(N)]
 
@@ -67,23 +60,25 @@ for _ in range(n_geracoes):
         if random.uniform(0,1) < taxa_mutacao:
             filho = mutacao(filho)
         prox.append(filho)
-    populacao = prox
+    populacao = sorted(populacao, key=lambda estado: estado.f, reverse = True)
+    populacao = populacao[:n_elite] + prox
 
 estado = max(populacao, key=lambda estado: estado.f)
 print (estado.f)
 
+
+
+
+
 x = [cidade[0] for cidade in cidades]
 y = [cidade[1] for cidade in cidades]
-
 fig = plt.figure()
 ax = fig.add_subplot()
-
 ax.scatter(x, y, color='black')
 
 for antena in estado.antenas:
     e = Ellipse(antena, width=0.2, height=0.2, angle=0)
     e.set_alpha(0.6)
     ax.add_artist(e)
-
 
 plt.show()
